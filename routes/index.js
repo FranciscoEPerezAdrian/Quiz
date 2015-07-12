@@ -11,4 +11,9 @@ router.get('/', function(req, res) {
 router.get('/quizes/question', quizController.question);
 router.get('/quizes/answer', quizController.answer);
 
+/* GET author, no se incluye en controller por no tener lógica asociada */
+router.get('/author', function(req, res){
+	res.render('author');
+});
+
 module.exports = router;
