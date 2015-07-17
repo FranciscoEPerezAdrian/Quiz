@@ -8,9 +8,8 @@ router.get('/', function(req, res) {
   res.render('index', { title: 'Quiz' });
 });
 
-//Rutas antiguas cuando había una sola pregunta
-//router.get('/quizes/question', quizController.question);
-//router.get('/quizes/answer', quizController.answer);
+//Autoload de comandos con :quizId
+router.param('quizId', quizController.load);  //autoload :quizId
 
 //Rutas para múltiples preguntas
 //Definición de rutas de /quizes
