@@ -12,9 +12,18 @@ exports.load = function(req, res, next, quizId){
 	).catch(function(error) { next(error);});
 };
 
-// GET /quizes
+// GET /quizes?search=
 exports.index = function(req, res) {
-	models.Quiz.findAll().then(
+	//objetobusqueda es el objeto que le pasamos a .findAll para la busqueda y ordenación
+	var objetobusqueda = {order: "pregunta ASC"};
+	if(req.query.search){
+		//si existe criterio de busqueda se sustituyen los espacios por % y se busca por el criterio
+		objetobusqueda = {where: ["upper(pregunta) like ?", 
+						 "%"+req.query.search.toUpperCase().trim().replace(/\s+/g,"%")+"%"], 
+						  order: "pregunta ASC"};
+	}
+	//pasamos a .findAll e objeto objetobusqueda resultante
+	models.Quiz.findAll(objetobusqueda).then(
 		function(quizes) {
 			res.render('quizes/index', {quizes: quizes});
 		}
