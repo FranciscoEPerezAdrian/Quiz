@@ -1,8 +1,10 @@
 var models = require('../models/models.js');
+var typeDB = process.env.DATABASE_URL.match(/(.*)\:\/\//)[1];
 
 // Autoload - factoriza el código si ruta incluye :quizId
 exports.load = function(req, res, next, quizId){
-	models.Quiz.find(quizId).then(
+	models.Quiz.find(quizId).
+	then(
 		function(quiz){
 			if (quiz) {
 				req.quiz = quiz;
@@ -14,16 +16,24 @@ exports.load = function(req, res, next, quizId){
 
 // GET /quizes?search=
 exports.index = function(req, res) {
-	//objetobusqueda es el objeto que le pasamos a .findAll para la busqueda y ordenación
-	var objetobusqueda = {order: "pregunta ASC"};
+	//objetoBusqueda es el objeto que le pasamos a .findAll para la busqueda y ordenación
+	var objetoBusqueda = {order: "tema ASC, pregunta ASC"};
+	objetoBusqueda.where = {};
+
+	//si existe criterio de busqueda se sustituyen los espacios por % y se busca por el criterio
 	if(req.query.search){
-		//si existe criterio de busqueda se sustituyen los espacios por % y se busca por el criterio
-		objetobusqueda = {where: ["upper(pregunta) like ?", 
-						 "%"+req.query.search.toUpperCase().trim().replace(/\s+/g,"%")+"%"], 
-						  order: "pregunta ASC"};
+		//La busqueda difiere si es sqlite o postgres para el case sensitive
+		if(typeDB === "sqlite")
+			objetoBusqueda.where.pregunta = {$like: "%"+req.query.search.trim().replace(/\s+/g,"%")+"%",};
+		else
+			objetoBusqueda.where.pregunta = {$iLike: "%"+req.query.search.trim().replace(/\s+/g,"%")+"%",};
 	}
-	//pasamos a .findAll e objeto objetobusqueda resultante
-	models.Quiz.findAll(objetobusqueda).then(
+	//si se indica en la búsqueda algún tema distinto de "TODOS", se incluye en la búsqueda
+	if(req.query.temasearch && req.query.temasearch !== "todos"){
+		objetoBusqueda.where.tema = req.query.temasearch;
+	}
+	//pasamos a .findAll e objeto objetoBusqueda resultante
+	models.Quiz.findAll(objetoBusqueda).then(
 		function(quizes) {
 			res.render('quizes/index', {quizes: quizes, errors: []});
 		}
@@ -47,7 +57,7 @@ exports.answer = function(req, res){
 // GET /quizes/new
 exports.new = function(req, res){
 	var quiz = models.Quiz.build(  // crea objeto quiz
-		{pregunta: "Pregunta", respuesta: "Respuesta"}
+		{tema: "otro", pregunta: "Pregunta", respuesta: "Respuesta"}
 	);
 
 	res.render('quizes/new', {quiz: quiz, errors: []});
@@ -65,7 +75,7 @@ exports.create = function(req, res) {
 				res.render('quizes/new', {quiz: quiz, errors: err.errors});
 			} else {
 				quiz  // save: guarda en DB campos y pregunta y respuesta de quiz
-				.save({fields: ["pregunta", "respuesta"]})
+				.save({fields: ["tema", "pregunta", "respuesta"]})
 				.then( function(){ res.redirect('/quizes')})
 			}		// res.redirect: Redirección HTTP a lista de preguntas
 		}
@@ -81,6 +91,7 @@ exports.edit = function(req, res) {
 
 // PUT /quizes/:id
 exports.update = function(req, res) {
+	req.quiz.tema 	   = req.body.quiz.tema;
 	req.quiz.pregunta  = req.body.quiz.pregunta;
 	req.quiz.respuesta = req.body.quiz.respuesta;
 
@@ -92,7 +103,7 @@ exports.update = function(req, res) {
 				res.render('quizes/edit', {quiz: req.quiz, errors: err.errors});
 			} else{
 				req.quiz 	//save: guarda campos pregunta y respuesta en DB
-				.save( {fields: ["pregunta", "respuesta"]})
+				.save( {fields: ["tema", "pregunta", "respuesta"]})
 				.then( function(){res.redirect('/quizes');});
 			}	// Redirección HTTP a lista de preguntas (URL relativo)
 		}
