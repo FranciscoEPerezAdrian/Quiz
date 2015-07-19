@@ -1,3 +1,19 @@
+<label for="tema" class="rem">Tema:</label>
+
+<!--Se comprueba en el select el tema de la pregunta a editar para preseleccionarlo,
+(si la pregunta es nueva, el tema por defecto es "otro")-->
+<select name="quiz[tema]">
+  <option value="otro" 
+  	<% if (quiz.tema === "otro") { %> selected <% } %>>Otro</option>
+  <option value="humanidades"
+  	<% if (quiz.tema === "humanidades") { %> selected <% } %>>Humanidades</option>
+  <option value="ocio"
+  	<% if (quiz.tema === "ocio") { %> selected <% } %>>Ocio</option>
+  <option value="ciencia"
+  	<% if (quiz.tema === "ciencia") { %> selected <% } %>>Ciencia</option>
+  <option value="tecnologia"
+  	<% if (quiz.tema === "tecnologia") { %> selected <% } %>>Tecnología</option>
+</select> <p>
 <label for="preg" class="rem">Pregunta:</label>
 <input type="text" id="preg" name="quiz[pregunta]" value="<%= quiz.pregunta %>"/> <p>
 <label for="resp" class="rem">Respuesta:</label>

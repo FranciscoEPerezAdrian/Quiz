@@ -6,7 +6,7 @@ body 					{font: 16px Georgia; serif;}
 						margin-bottom: 1px; color: black;}
 
 #listapreguntas 		{width: 50%; margin: auto;}
-#listapreguntas td		{text-align: left;}
+#listapreguntas td, th	{text-align: left;}
 
 section > div 			{padding: : 20px;}
 header, nav, section 	{background: #eee; text-align: center;}

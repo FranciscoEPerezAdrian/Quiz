@@ -3,7 +3,12 @@
 module.exports = function(sequielice, DataTypes){
 	return sequielice.define(
 		'Quiz',
-		{ pregunta: {
+		{ 
+		   tema: {
+		   	type: DataTypes.STRING,
+		   	validate: { notEmpty: {msg: "-> Falta Tema"}}
+		   },
+		   pregunta: {
 			type: DataTypes.STRING,
 			validate: { notEmpty: {msg: "-> Falta Pregunta"}}
 		   },  
