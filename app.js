@@ -40,6 +40,37 @@ app.use(function(req, res, next){
 	next();
 });
 
+//Comprueba si el usuario lleva mas de dos minutos sin hacer nada 
+//y si es así lo desconecta, si existe usuario almacena el momento de ultima transaccion
+app.use(function(req, res, next){
+    if(req.session.user){   //si hay un usuario conectado
+       //console.log("usuario conectado");  //Flag de depuracion
+        if(req.session.lastuse){ //si se ha registrado alguna actividad
+            if((req.session.lastuse + 120000) >= (new Date()).getTime()){ //si lleva menos de dos minutos sin actuar
+                req.session.lastuse = (new Date()).getTime();
+                next();
+                //console.log("menos de 2 minutos"); //Flag de depuracion
+            } else { //si lleva mas de 2 min inactivo, elimina usuario y registro de actividad
+                delete req.session.user;
+                delete req.session.lastuse;
+                res.redirect('/login');
+                //console.log("mas de 2 minutos"); //Flag de depuracion
+            }
+        } else {  //si no hay registro de actividad (con usuario) lo crea
+            req.session.lastuse = (new Date()).getTime();
+            next();
+            //console.log("sin registro de actividad"); //Flag de depuracion
+        }
+	} else {
+        if(req.session.lastuse){  //si hay registro de actividad sin usuario, lo elimina
+            //console.log("con registro de actividad"); //Flag de depuracion
+            delete req.session.lastuse;
+        }
+        next();
+        //console.log("sin usuario"); //Flag de depuracion
+    }
+});
+
 app.use('/', routes);
 
 // catch 404 and forward to error handler
