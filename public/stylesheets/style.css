@@ -6,7 +6,7 @@ body 					{font: 16px Georgia; serif;}
 						margin-bottom: 1px; color: black;}
 
 #listapreguntas 		{width: 50%; margin: auto;}
-#listapreguntas td, th	{text-align: left;}
+#listapreguntas td, #listapreguntas th	{text-align: left;}
 
 section > div 			{padding: : 20px;}
 header, nav, section 	{background: #eee; text-align: center;}
@@ -16,3 +16,7 @@ nav span 				{margin: 0px 10px 0px 0px;}
 #ErrorMsgs				{color: #f61; font-size: smaller;}
 
 .right 					{float: right;}
+
+#estadisticas			{width: 50%; margin: auto; border: 1px solid #000;}
+#estadisticas td 		{text-align: center; border: 1px solid #000;}
+#estadisticas th 		{text-align: left; border: 1px solid #000;}

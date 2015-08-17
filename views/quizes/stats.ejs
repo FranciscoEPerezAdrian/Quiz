@@ -1,0 +1,25 @@
+<h1>Estadísticas</h1>
+<p>
+<table id="estadisticas">
+<tr>
+	<th>Número Total de Preguntas:</th>
+	<td><%= stats.nquizes %></td>
+</tr>
+<tr>
+	<th>Número Total de Comentarios de Preguntas:</th>
+	<td><%= stats.ncomments %></td>
+</tr>
+<tr>
+	<th>Número Medio de Comentarios por Pregunta:</th>
+	<td><%= (stats.ncomments/stats.nquizes) %></td>
+</tr>
+<tr>
+	<th>Número de Preguntas sin Comentarios:</th>
+	<td><%= (stats.nquizes - stats.nquizeswithcomments) %></td>
+</tr>
+<tr>
+	<th>Número de Preguntas con Comentarios:</th>
+	<td><%= (stats.nquizeswithcomments) %></td>
+</tr>
+</table>
+</p> 
